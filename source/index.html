@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101f1b">
+  <meta name="description" content="Trellis: a working supervision layer for a self-rewriting website. Visible changes, deterministic risk gates, human approval, and reversible versions.">
+  <title>Trellis — The supervision layer for the living web</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d5944'/%3E%3Cpath d='M9 8h5v5H9zm9 0h5v5h-5zM9 17h5v7H9zm9 0h5v7h-5z' fill='%23c0edb5'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="studio-header">
+    <div class="studio-brand"><span class="trellis-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><strong>Trellis</strong><span class="brand-divider"></span><span class="studio-subtitle">The supervision layer for the living web</span></div>
+    <div class="header-right"><span class="build-badge">LIVING INTERNET BUILD DAY</span><button id="reset-demo" class="reset-button">↺ Reset demo</button></div>
+  </header>
+  <main class="workspace">
+    <section class="site-panel" aria-label="RelayOps live website">
+      <div class="browser-bar"><div class="traffic-lights" aria-hidden="true"><i></i><i></i><i></i></div><span class="address">▧ &nbsp; relayops.example <span>/</span></span><span class="live-dot">LIVE PREVIEW</span></div>
+      <div class="site-topbar"><a href="#" class="relay-brand" aria-label="RelayOps home"><span class="relay-logo">↗</span>RelayOps<span class="fiction-label">FICTIONAL SaaS</span></a><nav aria-label="RelayOps navigation"><a href="#features">Product</a><a href="#pricing">Pricing</a><a href="#assurance">Why RelayOps</a></nav></div>
+      <div class="preview-state"><span><i></i> <span id="audience-label">General audience</span></span><span id="page-version">PAGESPEC v1</span></div>
+      <div id="website" class="website"></div>
+      <footer class="site-footer"><span>© 2026 RelayOps · Fictional product demo</span><span>Built to move things forward. ↗</span></footer>
+    </section>
+    <aside class="dashboard" aria-label="Trellis supervision dashboard">
+      <div class="dashboard-header"><div><div class="eyebrow dashboard-eyebrow">SUPERVISION WORKSPACE</div><h1>Let it adapt.<br><span>Keep it accountable.</span></h1></div><span class="system-status"><i></i> POLICY ACTIVE</span></div>
+      <div class="dashboard-tabs" role="tablist" aria-label="Dashboard views"><button id="ledger-tab" class="active" role="tab" aria-selected="true" aria-controls="supervision-view">Supervision <span>●</span></button><button id="agent-tab" role="tab" aria-selected="false" aria-controls="agent-view">Agent view <span>{ }</span></button></div>
+      <div id="supervision-view" role="tabpanel" aria-labelledby="ledger-tab">
+        <section class="scenario-section"><div class="section-heading"><span>01 / SIMULATE A VISITOR</span><span>AI-authored scenarios</span></div><div class="scenario-buttons"><button data-scenario="enterprise"><span class="scenario-icon">▦</span><strong>Enterprise Buyer</strong><span>Governance first <b>↗</b></span></button><button data-scenario="indie"><span class="scenario-icon">⌘</span><strong>Indie Developer</strong><span>Build & ship faster <b>↗</b></span></button><button data-scenario="discount" class="campaign"><span class="scenario-icon">%</span><strong>Discount Campaign</strong><span>Propose $49 → $29 <b>↗</b></span></button></div></section>
+        <div class="pipeline" aria-label="Executable supervision pipeline"><span>Proposal</span><b>→</b><span>Diff</span><b>→</b><span class="policy-stage">Policy gate</span><b>→</b><span>Version</span></div>
+        <div class="policy-summary"><span class="shield-icon">◇</span><div><strong>Presentation is flexible. Trust is protected.</strong><p>Pricing · billing · legal claims · guarantees · CTA URLs · section deletion</p></div><span class="policy-count">6 GATES</span></div>
+        <div class="state-metrics"><div><span>LIVE VERSION</span><strong id="metric-version">v1</strong></div><div><span>RECORDED EVENTS</span><strong id="metric-events">0</strong></div><div><span>AWAITING REVIEW</span><strong id="metric-pending">0</strong></div></div>
+        <div id="pending-review"></div>
+        <section class="ledger-section"><div class="ledger-heading"><div><span class="section-heading">02 / CHANGE LEDGER</span><h2>Every change has a story.</h2></div><button id="rollback" class="rollback-button" disabled>↶ Rollback</button></div><div id="ledger"></div></section>
+      </div>
+      <section id="agent-view" role="tabpanel" aria-labelledby="agent-tab" hidden><div class="agent-heading"><h2>A page agents can read.</h2><p>Machine-readable preview of the current state. No live agent API or agent actions.</p><button id="download-json" class="secondary-button">↓ Download JSON</button></div><pre id="agent-json" tabindex="0"></pre></section>
+      <div class="dashboard-footer"><span class="small-mark">✦</span><p>AI-authored scenarios · deterministic replay ·<br>real policy and versioning logic · no live inference.</p></div>
+    </aside>
+  </main>
+  <div id="announcement" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="reset-dialog"><form method="dialog"><span class="eyebrow">START A FRESH DEMO</span><h2>Clear demonstration history?</h2><p>Reset restores the original PageSpec to v1 and clears all versions, ledger events, and pending proposals. This demo keeps state in memory; refreshing also starts fresh.</p><div class="dialog-actions"><button value="cancel" class="secondary-button">Keep history</button><button value="reset" class="primary-button">Reset & clear history</button></div></form></dialog>
+  <script src="trellis-core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

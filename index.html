@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101f1b">
+  <meta name="description" content="Trellis: a working supervision layer for a self-rewriting website. Visible changes, deterministic risk gates, human approval, and reversible versions.">
+  <title>Trellis — The supervision layer for the living web</title>
+  <style>
+@charset "UTF-8";
+:root{--ink:#172c24;--muted:#66756c;--green:#225c43;--paper:#fafbf6;--line:#e2e7dc;--night:#111e1c;--night-line:#30403a;--mint:#c4ecad;--amber:#f5bf68;font-family:Inter,"Aptos","Segoe UI",Arial,sans-serif;color:var(--ink);background:#e9ede5;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}a{color:inherit;text-decoration:none}button:disabled{cursor:default;opacity:.35}button,a{transition:background .18s,color .18s,border-color .18s,transform .18s}button:focus-visible,a:focus-visible,summary:focus-visible,pre:focus-visible{outline:3px solid #7bba8d;outline-offset:4px}button:hover:not(:disabled){transform:translateY(-1px)}[hidden]{display:none!important}
+.studio-header{height:80px;padding:0 30px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #d5ddd2;background:#f1f4ec}.studio-brand{display:flex;align-items:center;gap:12px}.studio-brand>strong{font-size:25px;letter-spacing:-1px}.trellis-mark{display:grid;grid-template-columns:repeat(2,7px);gap:3px;background:var(--green);padding:9px;border-radius:9px;transform:rotate(-5deg)}.trellis-mark i{height:8px;background:#d2f2ba;border-radius:1px}.brand-divider{height:22px;width:1px;background:#cdd5ca;margin:0 5px}.studio-subtitle{font-size:12px;color:#647464}.header-right{display:flex;gap:22px;align-items:center}.build-badge{font-size:9px;letter-spacing:1.4px;color:#677566}.reset-button{border:1px solid #cdd6c7;background:transparent;padding:9px 13px;border-radius:6px;font-size:11px;color:#465b49}.reset-button:hover{background:#e3eadc}
+.workspace{display:grid;grid-template-columns:minmax(0,57fr) minmax(0,43fr);margin:18px 22px 22px;border-radius:12px;overflow:hidden;border:1px solid #cbd5c8;box-shadow:0 12px 50px #14251b10;min-height:calc(100vh - 120px)}.site-panel{background:var(--paper);min-width:0}.browser-bar{height:41px;background:#edf0e8;border-bottom:1px solid #dfe4d9;display:flex;align-items:center;padding:0 22px;gap:22px}.traffic-lights{display:flex;gap:5px}.traffic-lights i{width:7px;height:7px;border-radius:50%;background:#c1cabc}.traffic-lights i:first-child{background:#d8b5a3}.traffic-lights i:nth-child(2){background:#dbcda3}.address{font-size:10px;color:#6d7b6b;flex:1}.address>span{color:#a2aa9e}.live-dot{font-size:8px;letter-spacing:1.1px;display:flex;align-items:center;gap:6px}.live-dot:before,.preview-state i,.system-status i{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:#6d9f70}.site-topbar{display:flex;justify-content:space-between;align-items:center;padding:24px 34px 18px}.relay-brand{font-size:19px;font-weight:750;letter-spacing:-.7px;display:flex;align-items:center;gap:8px}.relay-logo{font-size:21px;border-radius:6px;background:var(--green);color:#d9f4b3;width:29px;height:29px;display:grid;place-items:center}.fiction-label{font-size:7px;letter-spacing:.7px;font-weight:500;background:#edf1e5;color:#86917d;border-radius:3px;padding:4px;margin-left:3px}.site-topbar nav{display:flex;gap:22px;font-size:10px;color:#617160}.site-topbar nav a:hover{color:var(--green)}.preview-state{display:flex;justify-content:space-between;align-items:center;margin:0 34px;padding:8px 0;border-top:1px solid var(--line);color:#73836d;font-size:9px}.preview-state>span:first-child{display:flex;align-items:center;gap:6px}.preview-state>span:last-child{font-family:Consolas,monospace;font-size:8px;letter-spacing:.7px}.website{padding:0 34px}.eyebrow{font-size:8px;letter-spacing:1.4px;font-weight:700;color:#567448}.relay-hero{padding:27px 0 24px}.hero-layout{display:grid;grid-template-columns:62% 38%;gap:0;align-items:center}.relay-hero h2{font-size:clamp(37px,3.65vw,61px);letter-spacing:-2.7px;line-height:1.06;margin:16px 0 17px;font-weight:650}.hero-description{font-size:12px;line-height:1.75;color:#72806b;max-width:350px;margin:0 20px 19px 0}.relay-cta{display:inline-flex;align-items:center;gap:24px;background:var(--green);color:#f0f6e9;border-radius:6px;padding:12px 16px;font-size:11px;font-weight:600}.relay-cta:hover{background:#347452;transform:translateY(-1px)}.relay-cta>span{font-size:16px}.hero-note{font-size:8px;color:#7c8b72;margin-top:10px}.hero-note>span{color:#5f8054;padding-right:4px}.workflow-art{position:relative;margin:18px 0 8px 9px;border:1px solid #d1ddc9;background:linear-gradient(135deg,#ecf3e6,#f6f8ed);border-radius:11px;padding:14px;box-shadow:0 12px 22px #33522b0b;transform:rotate(-2deg);font-size:9px}.art-top{display:flex;justify-content:space-between;color:#77946b;font-size:7px;letter-spacing:.6px;margin-bottom:20px}.art-top i{display:inline-block;background:#6e965b;width:4px;height:4px;border-radius:50%;vertical-align:middle;margin-right:3px}.art-node{display:flex;align-items:center;gap:8px;background:#fdfdf8;border:1px solid #d9e2ce;border-radius:7px;padding:10px}.node-icon{width:30px;height:30px;background:#dae9cf;display:grid;place-items:center;border-radius:6px;font-size:21px;color:#648754}.art-node strong,.art-node small{display:block}.art-node strong{font-size:10px;font-weight:600}.art-node small{font-size:7px;margin-top:4px;color:#839075}.connector{display:flex;flex-direction:column;align-items:center;font-size:5px;letter-spacing:1px;color:#839776}.connector i{height:13px;width:1px;background:#b9ccb0}.connector span{padding:4px}.art-branches{display:flex;gap:8px;justify-content:space-between}.art-branches>span{flex:1;text-align:center;padding:10px 3px;background:#fdfdf8;border:1px solid #d9e2ce;border-radius:6px;font-size:17px;color:#557644}.art-branches small{display:block;font-size:7px;margin-top:4px;color:#768a6a}.art-result{margin-top:17px;font-size:7px;display:flex;gap:6px;align-items:center;color:#60864d;border:1px solid #d4e3c9;border-radius:5px;padding:8px;background:#e4efda}.art-result>span{border-radius:50%;background:#b9d6a3;font-size:8px;padding:2px}.art-result i{margin-left:auto;width:4px;height:4px;background:#89ab70;border-radius:50%}.floating-label{position:absolute;right:-7px;bottom:-12px;font-size:7px;background:var(--green);color:#e9f2dd;transform:rotate(5deg);border-radius:4px;padding:8px 12px}
+.relay-features{padding:19px 0 22px;border-top:1px solid var(--line)}.relay-section-heading h3{font-size:15px;letter-spacing:-.4px;margin:0 0 5px;font-weight:600}.relay-section-heading>p{font-size:9px;color:#7b8973;margin:0 0 14px}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.feature-card{border:1px solid #e1e6d7;border-radius:7px;padding:12px 13px;background:#f7f9f0}.feature-card.priority-card{background:#e9f1df;border-color:#ccdbbe}.feature-card>div{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}.feature-icon{font-size:17px;color:#5b8047}.feature-index{font-size:8px;color:#98a58c;font-family:Consolas,monospace}.feature-tag{font-size:6px;letter-spacing:.7px;color:#6c8659}.feature-card h4{font-size:11px;letter-spacing:-.15px;font-weight:600;margin:5px 0 7px}.feature-card p{font-size:9px;line-height:1.55;margin:0;color:#7a8870}.relay-assurance{display:flex;gap:13px;align-items:flex-start;border-top:1px solid var(--line);padding:18px 0}.assurance-icon{font-size:25px;background:#edf2e5;padding:2px 8px;border-radius:6px;color:#6b8b53}.relay-assurance h3{margin:1px 0 5px;font-size:12px;font-weight:600}.relay-assurance p{font-size:9px;line-height:1.6;color:#7b8872;margin:0;max-width:470px}.assurance-arrow{margin-left:auto;font-size:21px;color:#7c9270}.terms summary{font-size:7px;color:#849077;margin-top:6px;cursor:pointer}.terms p{margin:5px 0;font-size:8px}.relay-pricing{display:flex;justify-content:space-between;gap:16px;background:#edf2e4;border:1px solid #dce5d2;border-radius:8px;padding:18px 20px;margin:5px 0 15px;align-items:center}.relay-pricing .eyebrow{font-size:6px;letter-spacing:1px}.relay-pricing h3{font-size:14px;font-weight:600;letter-spacing:-.3px;margin:7px 0}.relay-pricing p{font-size:8px;color:#7d8b71;margin:0;line-height:1.5}.price-block{flex-shrink:0;text-align:right}.price{display:flex;justify-content:flex-end;align-items:baseline;gap:2px}.price>span{font-size:18px}.price strong{font-size:32px;letter-spacing:-1px;line-height:1.1;font-weight:600}.price small{font-size:7px;color:#7b8b6c;margin-left:3px}.price-block>a{display:inline-block;font-size:8px;color:var(--green);margin-top:7px;font-weight:600}.site-footer{margin:0 34px;border-top:1px solid var(--line);padding:14px 0 18px;display:flex;justify-content:space-between;font-size:7px;color:#94a08a}.changed-section{animation:change-flash 1.5s ease-out;position:relative}@keyframes change-flash{0%,20%{box-shadow:0 0 0 5px #8cba6260;background-color:#c7e5a860}100%{box-shadow:0 0 0 0 #8cba6200}}
+.dashboard{background:var(--night);color:#eff2e9;padding:27px 27px 0;min-width:0;position:relative;display:flex;flex-direction:column}.dashboard-header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:19px}.dashboard-eyebrow{color:#879a8e;font-size:7px;letter-spacing:1.5px;margin-bottom:12px}.dashboard-header h1{font-size:29px;letter-spacing:-.9px;line-height:1.18;font-weight:500;margin:0}.dashboard-header h1 span{color:#a3b4a5}.system-status{display:inline-flex;align-items:center;gap:6px;font-size:6px;letter-spacing:.8px;border:1px solid #35473a;border-radius:20px;padding:7px 9px;white-space:nowrap;margin-top:22px;color:#b3ccad}.system-status i{background:#b9e6a2}.dashboard-tabs{display:flex;gap:24px;border-bottom:1px solid var(--night-line);margin-bottom:19px}.dashboard-tabs button{padding:10px 0 12px;border:0;border-bottom:2px solid transparent;background:none;color:#8b9b90;font-size:10px}.dashboard-tabs button.active{color:#c7e9b6;border-bottom-color:#b8dea3}.dashboard-tabs span{font-size:7px;margin-left:6px;opacity:.6}.section-heading{display:flex;justify-content:space-between;font-size:7px;letter-spacing:1.1px;color:#93a596;align-items:center}.section-heading>span+span{font-size:6px;letter-spacing:.3px;color:#687f71}.scenario-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:11px}.scenario-buttons button{background:#1c2b25;border:1px solid #364638;border-radius:6px;color:#d1ded0;padding:13px 11px;text-align:left;min-width:0}.scenario-buttons button:hover,.scenario-buttons button.selected{background:#293c2d;border-color:#839f70}.scenario-icon{font-size:17px;display:block;margin-bottom:14px;color:#bfd9a7}.scenario-buttons strong{display:block;font-size:9px;font-weight:550;white-space:nowrap;letter-spacing:-.15px}.scenario-buttons button>span:last-child{display:flex;justify-content:space-between;font-size:7px;color:#88a07f;margin-top:7px;gap:3px;white-space:nowrap}.scenario-buttons b{font-weight:400;font-size:10px}.scenario-buttons button.campaign{background:#302b21;border-color:#514332;color:#ebd7b2}.campaign .scenario-icon{color:#e5bf7a}.scenario-buttons button.campaign>span:last-child{color:#b6a07a}.scenario-buttons button.campaign:hover,.scenario-buttons button.campaign.selected{border-color:#c79553;background:#403324}.pipeline{display:flex;align-items:center;justify-content:space-between;gap:5px;font-family:Consolas,monospace;font-size:8px;color:#9bafa0;margin:15px 0}.pipeline b{color:#536c5d;font-weight:400}.pipeline .policy-stage{color:#d0e8bc;background:#263a2a;border:1px solid #496144;border-radius:4px;padding:5px 9px}.policy-summary{display:flex;align-items:center;gap:10px;border-top:1px solid #2b3c33;border-bottom:1px solid #2b3c33;padding:13px 0}.shield-icon{font-size:20px;color:#b6d69f}.policy-summary strong{display:block;font-size:9px;color:#c5d7c3;font-weight:500}.policy-summary p{font-size:7px;color:#809681;line-height:1.65;margin:5px 0 0}.policy-count{font-family:Consolas,monospace;font-size:6px;white-space:nowrap;color:#a2b499;margin-left:auto}.state-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:17px 0 20px;border-bottom:1px solid var(--night-line)}.state-metrics>div{border-right:1px solid #304032}.state-metrics>div:last-child{border-right:0}.state-metrics span{font-size:6px;letter-spacing:.9px;color:#809884;display:block}.state-metrics strong{font-family:Consolas,monospace;font-size:22px;font-weight:400;color:#d2e6c3;display:block;margin-top:6px}.state-metrics>div:last-child strong{color:#e4cda3}.ledger-section{padding-top:20px;flex:1}.ledger-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;gap:10px}.ledger-heading h2{font-size:16px;font-weight:500;letter-spacing:-.3px;margin:8px 0 0}.rollback-button{background:none;border:1px solid #435443;border-radius:5px;color:#c3d5b7;font-size:8px;padding:8px 10px;white-space:nowrap}.rollback-button:hover:not(:disabled){background:#293b2b}.ledger-empty{background:#17251f;border:1px dashed #354739;border-radius:7px;text-align:center;padding:27px 10px 23px;margin-bottom:20px}.empty-illustration{display:inline-block;position:relative;padding:10px;margin-bottom:7px}.empty-illustration>span{display:grid;place-items:center;background:#2a3d2b;width:38px;height:43px;border:1px solid #52684b;color:#a9c198;font-size:25px;border-radius:5px;transform:rotate(-8deg)}.empty-illustration i{position:absolute;right:1px;bottom:5px;background:#c5e1ac;border:4px solid #17251f;border-radius:50%;font-style:normal;color:#314c2c;font-size:10px;width:24px;height:24px;padding-top:2px}.ledger-empty h3{font-size:12px;font-weight:500;margin:4px 0 9px}.ledger-empty p{font-size:9px;line-height:1.7;color:#7c9580;margin:0}.ledger-empty>div:last-child{display:flex;justify-content:center;gap:8px;font-size:6px;color:#8ca67e;margin-top:21px}.ledger-empty b{font-weight:400;color:#4e6850}.dashboard-footer{border-top:1px solid var(--night-line);margin-top:auto;padding:15px 0 18px;display:flex;gap:9px;align-items:center;background:var(--night);position:sticky;bottom:0;z-index:2}.small-mark{font-size:17px;color:#9bb786}.dashboard-footer p{font-size:7px;color:#829983;line-height:1.8;margin:0}
+.review-card{margin-top:18px;border:1px solid #79613c;border-radius:7px;background:#2a2920;padding:15px}.review-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.review-top>span:last-child{font-family:Consolas,monospace;font-size:6px;color:#d4b586}.review-card h3{font-size:14px;font-weight:500;margin:13px 0 8px}.review-card>p{font-size:9px;line-height:1.65;color:#baa788;margin:0 0 13px}.review-actions{display:flex;gap:8px;margin-top:14px}.approve-button{background:#c5dfa7;color:#213520;border:1px solid #c5dfa7;border-radius:5px;font-size:9px;font-weight:600;padding:10px 15px;flex:1}.approve-button:hover{background:#def0c9}.reject-button{background:transparent;border:1px solid #7c674a;border-radius:5px;color:#d7bea1;font-size:9px;padding:10px 19px}.status-badge{font-family:Consolas,monospace;font-size:7px;border-radius:3px;padding:4px 6px;letter-spacing:.4px;display:inline-block;line-height:1}.status-badge.auto{background:#2a402d;color:#c0dfa9;border:1px solid #42623b}.status-badge.hold{background:#463725;color:#efc07b;border:1px solid #745632}.status-badge.approved{background:#263e36;color:#afe0c5;border:1px solid #3e6553}.status-badge.rejected{background:#3c2b2a;color:#e2a99c;border:1px solid #634038}.ledger-event{border:1px solid #35473a;border-radius:6px;margin-bottom:10px;background:#1b2a22;overflow:hidden}.ledger-event summary{display:flex;align-items:center;gap:10px;padding:13px 12px;cursor:pointer;list-style:none}.ledger-event summary::-webkit-details-marker{display:none}.event-dot{width:6px;height:6px;background:#a9c68b;border-radius:50%;flex-shrink:0}.hold .event-dot{background:#e1ae66}.rejected .event-dot{background:#d58a7e}.approved .event-dot{background:#89c7aa}.event-title{flex:1;min-width:0}.event-title strong{font-size:10px;font-weight:500;display:block}.event-title>span{display:block;font-size:7px;color:#819680;margin-top:5px}.event-meta{text-align:right}.event-meta small{display:block;font-family:Consolas,monospace;font-size:6px;color:#7d967e;margin-top:6px}.expand-chevron{font-size:11px;color:#91a487}.ledger-event[open] .expand-chevron{transform:rotate(180deg)}.event-body{padding:0 12px 13px;border-top:1px solid #304336}.version-line{display:flex;justify-content:space-between;font-family:Consolas,monospace;font-size:7px;color:#c4d6b5;margin-top:11px}.version-line>span:last-child{color:#668569}.event-reason{font-size:9px;color:#b3c6a9;line-height:1.7;margin:10px 0}.proposal-reason{font-size:8px;color:#819a7b;line-height:1.7;margin:0 0 12px}.diff-row{margin-top:9px}.diff-field{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.diff-field code{font-size:7px;font-family:Consolas,monospace;color:#aebfa2}.protected-tag{font-size:5px;letter-spacing:.5px;color:#dfbc84}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:5px}.comparison>div{border-radius:4px;padding:8px;min-width:0}.comparison .before{background:#282d24;border:1px solid #424537}.comparison .after{background:#283828;border:1px solid #435840}.comparison span{display:block;font-size:5px;letter-spacing:.7px;margin-bottom:5px;color:#8e9d7d}.comparison .before span{color:#a5997c}.comparison p{font-size:8px;color:#c6d5b9;line-height:1.55;margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.comparison .before p{color:#b2ae96}.agent-heading h2{font-size:20px;font-weight:500;letter-spacing:-.4px;margin:5px 0 10px}.agent-heading p{font-size:10px;color:#8da087;line-height:1.8;max-width:350px}.secondary-button{border:1px solid #667b58;border-radius:5px;color:inherit;background:transparent;padding:9px 13px;font-size:10px}.agent-heading button{margin:8px 0 15px;color:#c6dfad}.dashboard pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:9px;background:#17261d;color:#aac396;border:1px solid #344930;padding:15px;border-radius:7px;max-height:550px;overflow:auto}.toast{position:fixed;bottom:23px;left:50%;transform:translate(-50%,12px);border:1px solid #5b7852;box-shadow:0 8px 40px #0003;background:#263d2a;color:#e2f0d2;padding:13px 22px;border-radius:8px;font-size:11px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:10;max-width:90vw}.toast.visible{opacity:1;transform:translate(-50%,0)}dialog{max-width:440px;border:1px solid #b6c7a8;background:#f4f7ee;color:#273c27;border-radius:12px;padding:28px;box-shadow:0 25px 80px #0004}dialog::backdrop{background:#0a1c1380;backdrop-filter:blur(3px)}dialog h2{font-weight:550;letter-spacing:-.6px;font-size:24px;margin:14px 0}dialog p{font-size:12px;color:#6b7b5e;line-height:1.8}.dialog-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:23px}.primary-button{background:var(--green);color:white;border:1px solid var(--green);padding:10px 14px;border-radius:5px;font-size:10px}
+@media(min-width:1200px){.workspace{height:calc(100vh - 120px);min-height:700px}.site-panel,.dashboard{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#5d71584d transparent}.dashboard{scrollbar-color:#4b6145 transparent}.site-panel{scroll-behavior:smooth}}
+@media(min-width:1600px){.studio-header{padding:0 4vw}.workspace{margin-left:4vw;margin-right:4vw}.website,.site-topbar{padding-left:42px;padding-right:42px}.preview-state,.site-footer{margin-left:42px;margin-right:42px}.dashboard{padding-left:34px;padding-right:34px}.relay-hero{padding-top:38px;padding-bottom:32px}.hero-description{font-size:14px}.relay-features{padding-top:25px;padding-bottom:25px}.feature-card{padding:17px}.feature-card p{font-size:11px}.relay-assurance{padding-top:24px;padding-bottom:24px}.relay-pricing{padding:24px}.scenario-buttons strong{font-size:11px}}
+@media(max-width:1199px){.workspace{grid-template-columns:1fr 1fr;margin:12px}.studio-header{padding:0 20px}.studio-subtitle{display:none}.build-badge{font-size:7px}.website{padding:0 24px}.site-topbar{padding:24px 24px 18px}.site-topbar nav{gap:12px}.fiction-label{display:none}.preview-state,.site-footer{margin-left:24px;margin-right:24px}.hero-layout{grid-template-columns:1fr}.workflow-art{display:none}.relay-hero h2{font-size:48px}.dashboard{padding-left:20px;padding-right:20px}.dashboard-header h1{font-size:25px}.system-status{font-size:5px;padding:6px}.scenario-buttons{gap:5px}.scenario-buttons button{padding:11px 7px}.scenario-buttons strong{font-size:8px}.scenario-buttons button>span:last-child{font-size:6px}.relay-pricing{flex-direction:column;align-items:flex-start}.price-block{text-align:left}.price{justify-content:flex-start}.site-footer{gap:10px}.policy-count{display:none}}
+@media(max-width:760px){.studio-header{height:68px;padding:0 16px}.studio-brand>strong{font-size:23px}.brand-divider,.build-badge{display:none}.workspace{grid-template-columns:1fr;border-radius:9px;margin:10px}.site-topbar nav{font-size:9px}.hero-layout{grid-template-columns:62% 38%}.relay-hero h2{font-size:clamp(31px,6.6vw,48px);letter-spacing:-1.8px}.workflow-art{display:block;margin-left:4px;padding:10px}.hero-description{font-size:10px;line-height:1.7}.relay-pricing{flex-direction:row;align-items:center}.dashboard{padding:25px 23px 0}.dashboard-header h1{font-size:30px}.system-status{font-size:7px}.scenario-buttons{gap:8px}.scenario-buttons button{padding:14px 10px}.scenario-buttons strong{font-size:10px}.scenario-buttons button>span:last-child{font-size:7px}.dashboard-footer{position:relative}.feature-card{padding:10px}.feature-card h4{font-size:10px}.feature-card p{font-size:8px}.relay-pricing h3{font-size:12px}.relay-cta{font-size:9px;padding:10px 12px;gap:12px}.section-heading{font-size:8px}.policy-summary strong{font-size:10px}.policy-summary p{font-size:8px}.comparison p{font-size:10px}.diff-field code{font-size:9px}.event-reason{font-size:11px}.event-title strong{font-size:12px}.event-title>span{font-size:9px}.review-card>p{font-size:11px}.review-top>span:last-child{font-size:7px}}
+@media(max-width:420px){.hero-layout{grid-template-columns:1fr}.workflow-art{display:none}.relay-hero h2{font-size:44px}.scenario-buttons strong{font-size:8px}.scenario-buttons button>span:last-child{font-size:6px}.relay-pricing{padding:14px 12px}.relay-pricing h3{font-size:11px}.price-block p{max-width:135px}.site-footer{font-size:6px}.dashboard{padding-left:17px;padding-right:17px}}
+/* Keep the price in view during a laptop demonstration. */
+.relay-hero h2{margin:12px 0;font-size:clamp(37px,3.4vw,57px)}.hero-description{line-height:1.6}.relay-cta{padding-top:10px;padding-bottom:10px}.feature-card{padding:10px 12px}.feature-card>div{margin-bottom:4px}.feature-icon{font-size:14px}.feature-card h4{margin:4px 0 5px}.feature-card p{font-size:9px;line-height:1.4}.relay-section-heading>p{margin-bottom:8px}.relay-section-heading h3{margin-bottom:4px}.relay-assurance{padding-top:12px;padding-bottom:12px}.inline-arrow{width:12px;height:12px;display:inline-block;vertical-align:middle;flex-shrink:0}.relay-logo .inline-arrow{width:19px;height:19px}
+.workflow-art{line-height:1.25}.art-top{margin-bottom:13px}.art-branches>span{padding:7px 3px}.connector i{height:9px}.art-result{margin-top:12px}.feature-card{font-size:10px;line-height:1.35}.feature-card>div{margin-bottom:7px}.feature-tag{display:block}.feature-card h4{margin-top:5px}.relay-hero{padding-top:19px;padding-bottom:20px}.site-topbar{padding-top:18px;padding-bottom:15px}.relay-features{padding-top:15px;padding-bottom:17px}.relay-assurance{padding-top:14px;padding-bottom:14px}.relay-pricing{padding-top:14px;padding-bottom:14px}.hero-description{margin-bottom:15px}.hero-note{font-size:9px}.relay-section-heading>p{font-size:10px}.feature-card p,.relay-assurance p{font-size:10px}.site-footer{padding-bottom:12px}.scenario-buttons strong{font-size:11px}.scenario-buttons button>span:last-child{font-size:9px}.section-heading{font-size:9px}.section-heading>span+span{font-size:8px}.dashboard-eyebrow{font-size:8px}.system-status{font-size:8px}.dashboard-tabs button{font-size:12px}.pipeline{font-size:10px}.policy-summary strong{font-size:11px}.policy-summary p{font-size:9px}.policy-count{font-size:7px}.state-metrics span{font-size:8px}.ledger-empty h3{font-size:14px}.ledger-empty p{font-size:11px}.ledger-empty>div:last-child{font-size:8px}.dashboard-footer p{font-size:9px}.event-title strong{font-size:12px}.event-title>span{font-size:9px}.event-meta small,.version-line{font-size:8px}.status-badge{font-size:9px}.event-reason{font-size:11px}.proposal-reason{font-size:10px}.diff-field code{font-size:9px}.comparison span{font-size:7px}.comparison p{font-size:10px}.protected-tag{font-size:7px}.review-card>p{font-size:11px}.review-top>span:last-child{font-size:8px}.review-actions button{font-size:11px}.rollback-button{font-size:10px}.agent-heading p{font-size:12px}.dashboard pre{font-size:11px}
+@media(min-width:1200px) and (max-height:850px){.studio-header{height:64px}.workspace{margin-top:12px;height:calc(100vh - 92px);min-height:620px}.browser-bar{height:34px}.site-topbar{padding-top:14px;padding-bottom:12px}.preview-state{padding:6px 0}.relay-hero{padding-top:16px;padding-bottom:15px}.relay-hero h2{font-size:48px;margin:12px 0}.hero-description{font-size:11px;line-height:1.6;margin-bottom:12px}.workflow-art{padding:11px;margin-top:10px}.relay-features{padding-top:12px;padding-bottom:13px}.feature-card{padding:9px 11px}.relay-assurance{padding:11px 0}.relay-pricing{padding:11px 15px}.dashboard{padding-top:20px}.dashboard-header{margin-bottom:12px}.dashboard-header h1{font-size:26px}.dashboard-eyebrow{margin-bottom:8px}.dashboard-tabs{margin-bottom:14px}}
+@media(max-width:1199px){.scenario-buttons strong{font-size:9px}.scenario-buttons button>span:last-child{font-size:7px}.policy-count{display:none}}
+@media(max-width:760px){.scenario-buttons strong{font-size:10px}.scenario-buttons button>span:last-child{font-size:8px}}
+@media(max-width:420px){.scenario-buttons strong{font-size:8px}.scenario-buttons button>span:last-child{font-size:6px}}
+@media(min-width:1200px) and (max-width:1599px){.browser-bar{height:34px}.site-topbar{padding-top:15px;padding-bottom:12px}.preview-state{padding:6px 0}.relay-hero{padding:16px 0}.relay-hero h2{font-size:48px;margin:10px 0}.hero-description{font-size:11px;line-height:1.6;margin-bottom:12px}.hero-note{font-size:8px}.workflow-art{height:210px;margin-top:10px;padding:12px}.art-top{margin-bottom:10px}.art-node{padding:8px}.connector i{height:6px}.art-branches>span{padding:5px 3px}.art-result{margin-top:9px;padding:6px}.feature-card{padding:9px 12px}.feature-card>div{margin-bottom:4px}.feature-card p{font-size:9px;line-height:1.4}.feature-tag{font-size:6px}.relay-section-heading>p{margin-bottom:8px}.relay-features{padding:13px 0 15px}.relay-assurance{padding:12px 0}.relay-assurance p{font-size:9px}.relay-pricing{padding:13px 18px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.changed-section{outline:2px solid #89b764;outline-offset:3px}}
+
+</style>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d5944'/%3E%3Cpath d='M9 8h5v5H9zm9 0h5v5h-5zM9 17h5v7H9zm9 0h5v7h-5z' fill='%23c0edb5'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="studio-header">
+    <div class="studio-brand"><span class="trellis-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><strong>Trellis</strong><span class="brand-divider"></span><span class="studio-subtitle">The supervision layer for the living web</span></div>
+    <div class="header-right"><span class="build-badge">LIVING INTERNET BUILD DAY</span><button id="reset-demo" class="reset-button">↺ Reset demo</button></div>
+  </header>
+  <main class="workspace">
+    <section class="site-panel" aria-label="RelayOps live website">
+      <div class="browser-bar"><div class="traffic-lights" aria-hidden="true"><i></i><i></i><i></i></div><span class="address">▧ &nbsp; relayops.example <span>/</span></span><span class="live-dot">LIVE PREVIEW</span></div>
+      <div class="site-topbar"><a href="#" class="relay-brand" aria-label="RelayOps home"><span class="relay-logo">↗</span>RelayOps<span class="fiction-label">FICTIONAL SaaS</span></a><nav aria-label="RelayOps navigation"><a href="#features">Product</a><a href="#pricing">Pricing</a><a href="#assurance">Why RelayOps</a></nav></div>
+      <div class="preview-state"><span><i></i> <span id="audience-label">General audience</span></span><span id="page-version">PAGESPEC v1</span></div>
+      <div id="website" class="website"></div>
+      <footer class="site-footer"><span>© 2026 RelayOps · Fictional product demo</span><span>Built to move things forward. ↗</span></footer>
+    </section>
+    <aside class="dashboard" aria-label="Trellis supervision dashboard">
+      <div class="dashboard-header"><div><div class="eyebrow dashboard-eyebrow">SUPERVISION WORKSPACE</div><h1>Let it adapt.<br><span>Keep it accountable.</span></h1></div><span class="system-status"><i></i> POLICY ACTIVE</span></div>
+      <div class="dashboard-tabs" role="tablist" aria-label="Dashboard views"><button id="ledger-tab" class="active" role="tab" aria-selected="true" aria-controls="supervision-view">Supervision <span>●</span></button><button id="agent-tab" role="tab" aria-selected="false" aria-controls="agent-view">Agent view <span>{ }</span></button></div>
+      <div id="supervision-view" role="tabpanel" aria-labelledby="ledger-tab">
+        <section class="scenario-section"><div class="section-heading"><span>01 / SIMULATE A VISITOR</span><span>AI-authored scenarios</span></div><div class="scenario-buttons"><button data-scenario="enterprise"><span class="scenario-icon">▦</span><strong>Enterprise Buyer</strong><span>Governance first <b>↗</b></span></button><button data-scenario="indie"><span class="scenario-icon">⌘</span><strong>Indie Developer</strong><span>Build & ship faster <b>↗</b></span></button><button data-scenario="discount" class="campaign"><span class="scenario-icon">%</span><strong>Discount Campaign</strong><span>Propose $49 → $29 <b>↗</b></span></button></div></section>
+        <div class="pipeline" aria-label="Executable supervision pipeline"><span>Proposal</span><b>→</b><span>Diff</span><b>→</b><span class="policy-stage">Policy gate</span><b>→</b><span>Version</span></div>
+        <div class="policy-summary"><span class="shield-icon">◇</span><div><strong>Presentation is flexible. Trust is protected.</strong><p>Pricing · billing · legal claims · guarantees · CTA URLs · section deletion</p></div><span class="policy-count">6 GATES</span></div>
+        <div class="state-metrics"><div><span>LIVE VERSION</span><strong id="metric-version">v1</strong></div><div><span>RECORDED EVENTS</span><strong id="metric-events">0</strong></div><div><span>AWAITING REVIEW</span><strong id="metric-pending">0</strong></div></div>
+        <div id="pending-review"></div>
+        <section class="ledger-section"><div class="ledger-heading"><div><span class="section-heading">02 / CHANGE LEDGER</span><h2>Every change has a story.</h2></div><button id="rollback" class="rollback-button" disabled>↶ Rollback</button></div><div id="ledger"></div></section>
+      </div>
+      <section id="agent-view" role="tabpanel" aria-labelledby="agent-tab" hidden><div class="agent-heading"><h2>A page agents can read.</h2><p>Machine-readable preview of the current state. No live agent API or agent actions.</p><button id="download-json" class="secondary-button">↓ Download JSON</button></div><pre id="agent-json" tabindex="0"></pre></section>
+      <div class="dashboard-footer"><span class="small-mark">✦</span><p>AI-authored scenarios · deterministic replay ·<br>real policy and versioning logic · no live inference.</p></div>
+    </aside>
+  </main>
+  <div id="announcement" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="reset-dialog"><form method="dialog"><span class="eyebrow">START A FRESH DEMO</span><h2>Clear demonstration history?</h2><p>Reset restores the original PageSpec to v1 and clears all versions, ledger events, and pending proposals. This demo keeps state in memory; refreshing also starts fresh.</p><div class="dialog-actions"><button value="cancel" class="secondary-button">Keep history</button><button value="reset" class="primary-button">Reset & clear history</button></div></form></dialog>
+  <script>
+(function (root, factory) {
+  'use strict';
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.TrellisCore = api;
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const own = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+  const featureIDs = ['governance', 'routing', 'developer'];
+  const schema = {
+    hero: { eyebrow: 'string', headline: 'string', description: 'string', ctaText: 'string', ctaUrl: 'url', note: 'string' },
+    features: { title: 'string', subtitle: 'string', priorities: 'priorities' },
+    assurance: { title: 'string', description: 'string', legalClaims: 'string', guarantees: 'string' },
+    pricing: { title: 'string', description: 'string', amount: 'amount', currency: 'currency', billingTerms: 'string', ctaText: 'string', ctaUrl: 'url', label: 'string' }
+  };
+  const initialPage = {
+    schemaVersion: 1, version: 1,
+    order: ['hero', 'features', 'assurance', 'pricing'],
+    sections: {
+      hero: { id: 'hero', type: 'hero', props: { eyebrow: 'THE OPERATING SYSTEM FOR AI WORK', headline: 'Less busywork.\nMore momentum.', description: 'Bring your agents, tools, and team into one calm workspace. RelayOps turns scattered workflows into coordinated action.', ctaText: 'Start building', ctaUrl: '#pricing', note: 'Your workflows. Finally in sync.' } },
+      features: { id: 'features', type: 'features', props: { title: 'One workspace. Every moving part.', subtitle: 'From your first workflow to your next big launch.', priorities: ['routing', 'developer', 'governance'] } },
+      assurance: { id: 'assurance', type: 'assurance', props: { title: 'Move fast. Stay in control.', description: 'Give every workflow an owner, a clear permission boundary, and a trail you can follow.', legalClaims: 'Security documentation available on request.', guarantees: 'Service commitments are defined in your agreement.' } },
+      pricing: { id: 'pricing', type: 'pricing', props: { title: 'A little structure. A lot of possibility.', description: 'The Team plan · one shared workspace', amount: 49, currency: 'USD', billingTerms: 'per workspace / month · billed monthly', ctaText: 'Explore the Team plan', ctaUrl: '#pricing', label: 'SIMPLE, PREDICTABLE PRICING' } }
+    }
+  };
+  // AI-authored during development. No runtime inference or remote requests.
+  const scenarios = {
+    enterprise: { scenario: 'Enterprise Buyer', reason: 'Prioritize governance and coordinated operations for a larger team.', operations: [
+      { op: 'set', path: 'sections.hero.props.eyebrow', value: 'BUILT FOR COMPLEXITY. DESIGNED FOR CONTROL.' },
+      { op: 'set', path: 'sections.hero.props.headline', value: 'Your agents.\nUnder control.' },
+      { op: 'set', path: 'sections.hero.props.description', value: 'Coordinate AI work across your organization with permission boundaries, reviewable actions, and a shared operational view.' },
+      { op: 'set', path: 'sections.hero.props.ctaText', value: 'Explore enterprise' },
+      { op: 'set', path: 'sections.hero.props.note', value: 'Built for teams with more at stake.' },
+      { op: 'set', path: 'sections.features.props.title', value: 'Control comes first.' },
+      { op: 'set', path: 'sections.features.props.subtitle', value: 'Governance, coordination, and developer tools. In that order.' },
+      { op: 'set', path: 'sections.features.props.priorities', value: ['governance', 'routing', 'developer'] },
+      { op: 'set', path: 'sections.assurance.props.title', value: 'A clear boundary for every agent.' },
+      { op: 'set', path: 'sections.assurance.props.description', value: 'Review sensitive actions, assign accountable owners, and trace decisions across your organization.' },
+      { op: 'set', path: 'order', value: ['hero', 'assurance', 'features', 'pricing'] }
+    ] },
+    indie: { scenario: 'Indie Developer', reason: 'Prioritize fast integration and a lightweight workflow for an independent builder.', operations: [
+      { op: 'set', path: 'sections.hero.props.eyebrow', value: 'FOR THE TEAM OF ONE WITH A THOUSAND IDEAS' },
+      { op: 'set', path: 'sections.hero.props.headline', value: 'Small team.\nBig shipping energy.' },
+      { op: 'set', path: 'sections.hero.props.description', value: 'Connect your tools, route the repetitive work, and get back to what you love building. Your next launch starts here.' },
+      { op: 'set', path: 'sections.hero.props.ctaText', value: 'Build your first workflow' },
+      { op: 'set', path: 'sections.hero.props.note', value: 'Less configuration. More creation.' },
+      { op: 'set', path: 'sections.features.props.title', value: 'Made for your next side project.' },
+      { op: 'set', path: 'sections.features.props.subtitle', value: 'Start with developer tools. Grow at your own pace.' },
+      { op: 'set', path: 'sections.features.props.priorities', value: ['developer', 'routing', 'governance'] },
+      { op: 'set', path: 'sections.assurance.props.title', value: 'You build. You stay in charge.' },
+      { op: 'set', path: 'sections.assurance.props.description', value: 'Keep ownership of every workflow, with clear permissions and a review trail from day one.' },
+      { op: 'set', path: 'order', value: ['hero', 'features', 'pricing', 'assurance'] }
+    ] },
+    discount: { scenario: 'Discount Campaign', reason: 'Propose a launch promotion: reduce the Team plan from $49 to $29 and update its campaign copy.', operations: [
+      { op: 'set', path: 'sections.pricing.props.amount', value: 29 },
+      { op: 'set', path: 'sections.pricing.props.label', value: 'BUILD DAY SPECIAL' },
+      { op: 'set', path: 'sections.pricing.props.title', value: 'Your next chapter starts here.' }
+    ] }
+  };
+  function keysExactly(obj, keys) {
+    return obj && typeof obj === 'object' && !Array.isArray(obj) && equal(Object.keys(obj).sort(), keys.slice().sort());
+  }
+  function validValue(value, type) {
+    if (type === 'string') return typeof value === 'string' && value.length > 0 && value.length <= 2000;
+    if (type === 'url') return typeof value === 'string' && (/^#[a-z][a-z0-9-]*$/i.test(value) || /^https:\/\/[^\s]+$/i.test(value));
+    if (type === 'amount') return typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1000000;
+    if (type === 'currency') return value === 'USD';
+    if (type === 'priorities') return Array.isArray(value) && equal(value.slice().sort(), featureIDs.slice().sort());
+    return false;
+  }
+  function validatePage(page) {
+    if (!keysExactly(page, ['schemaVersion', 'version', 'order', 'sections']) || page.schemaVersion !== 1 || !Number.isSafeInteger(page.version) || page.version < 1) throw new Error('Invalid PageSpec metadata.');
+    if (!page.sections || typeof page.sections !== 'object' || Array.isArray(page.sections)) throw new Error('Invalid sections.');
+    const ids = Object.keys(page.sections);
+    if (!ids.length || !Array.isArray(page.order) || !equal(page.order.slice().sort(), ids.slice().sort())) throw new Error('Section order must contain every section exactly once.');
+    ids.forEach(id => {
+      const section = page.sections[id];
+      if (!own(schema, id) || !keysExactly(section, ['id', 'type', 'props']) || section.id !== id || section.type !== id) throw new Error('Unknown section ID or type.');
+      if (!keysExactly(section.props, Object.keys(schema[id]))) throw new Error('Unknown or missing property.');
+      Object.keys(schema[id]).forEach(key => { if (!validValue(section.props[key], schema[id][key])) throw new Error('Invalid typed property: ' + id + '.' + key); });
+    });
+    return true;
+  }
+  function computeDiff(before, after, path) {
+    path = path || '';
+    if (equal(before, after)) return [];
+    if (before && after && typeof before === 'object' && typeof after === 'object' && !Array.isArray(before) && !Array.isArray(after)) {
+      return Array.from(new Set(Object.keys(before).concat(Object.keys(after)))).flatMap(key => computeDiff(before[key], after[key], path ? path + '.' + key : key));
+    }
+    return [{ path: path, before: before === undefined ? null : clone(before), after: after === undefined ? null : clone(after), kind: after === undefined ? 'remove' : before === undefined ? 'add' : 'change' }];
+  }
+  function protectedField(change) {
+    if (change.kind === 'remove' && /^sections\.[^.]+$/.test(change.path)) return 'Section deletion';
+    const field = change.path.split('.').pop();
+    return ({ amount: 'Pricing amount', currency: 'Pricing currency', billingTerms: 'Billing terms', legalClaims: 'Legal claim', guarantees: 'Guarantee', ctaUrl: 'CTA destination URL' })[field] || null;
+  }
+  function evaluatePolicy(changes) {
+    const protectedChanges = changes.filter(protectedField);
+    return { status: protectedChanges.length ? 'HOLD' : 'AUTO', protectedFields: protectedChanges.map(c => c.path), reason: protectedChanges.length ? protectedChanges.map(c => protectedField(c) + ' is protected (' + c.path + ').').join(' ') + ' The entire proposal requires approval.' : changes.length ? 'Only validated presentation fields changed. Safe to auto-apply.' : 'No changes. The current version is already up to date.' };
+  }
+  function applyOperations(page, operations) {
+    if (!Array.isArray(operations) || operations.length > 100) throw new Error('Invalid operations list.');
+    const next = clone(page);
+    const touched = new Set();
+    operations.forEach(operation => {
+      if (!operation || !['set', 'remove'].includes(operation.op) || typeof operation.path !== 'string' || !keysExactly(operation, operation.op === 'set' ? ['op', 'path', 'value'] : ['op', 'path'])) throw new Error('Unknown or invalid operation.');
+      const path = operation.path;
+      if (touched.has(path)) throw new Error('Duplicate operation path.');
+      touched.add(path);
+      if (path === 'order' && operation.op === 'set') { next.order = clone(operation.value); return; }
+      const parts = path.split('.');
+      if (parts[0] !== 'sections' || !own(next.sections, parts[1])) throw new Error('Unknown modification path: ' + path);
+      if (operation.op === 'remove' && parts.length === 2) { delete next.sections[parts[1]]; next.order = next.order.filter(id => id !== parts[1]); return; }
+      if (operation.op !== 'set' || parts.length !== 4 || parts[2] !== 'props' || !own(schema[parts[1]], parts[3])) throw new Error('Unknown modification path: ' + path);
+      next.sections[parts[1]].props[parts[3]] = clone(operation.value);
+    });
+    validatePage(next);
+    return next;
+  }
+  function createEngine(options) {
+    options = options || {};
+    let page = clone(initialPage), ledger = [], pending = {}, history = [clone(page)], counter = 0;
+    const clock = options.clock || (() => new Date().toISOString());
+    function append(data) {
+      const event = Object.assign({ id: 'event-' + (++counter), timestamp: clock(), changes: [], fromVersion: page.version, toVersion: page.version, approvalRequired: false }, data);
+      ledger.push(clone(event)); return clone(event);
+    }
+    function commit(candidate) { page = clone(candidate); page.version = history[history.length - 1].version + 1; history.push(clone(page)); }
+    function submit(proposal) {
+      let candidate, changes;
+      const scenario = proposal && typeof proposal.scenario === 'string' ? proposal.scenario : 'Unknown proposal';
+      try {
+        if (!keysExactly(proposal, ['scenario', 'reason', 'baseVersion', 'operations']) || typeof proposal.reason !== 'string' || !proposal.reason || typeof proposal.scenario !== 'string' || !proposal.scenario) throw new Error('Invalid proposal envelope.');
+        if (proposal.baseVersion !== page.version) throw new Error('Stale proposal: expected v' + page.version + ', received v' + proposal.baseVersion + '.');
+        candidate = applyOperations(page, proposal.operations);
+        changes = computeDiff(page, candidate);
+      } catch (error) { return append({ scenario: scenario, status: 'REJECTED', reason: error.message, proposalReason: proposal && typeof proposal.reason === 'string' ? proposal.reason : '' }); }
+      const policy = evaluatePolicy(changes), fromVersion = page.version;
+      if (policy.status === 'HOLD') {
+        const duplicate = Object.values(pending).find(p => p.baseVersion === fromVersion && equal(p.candidate, candidate));
+        if (duplicate) return clone(ledger.find(e => e.id === duplicate.id));
+        const event = append({ scenario: scenario, status: 'HOLD', changes: changes, reason: policy.reason, proposalReason: proposal.reason, protectedFields: policy.protectedFields, approvalRequired: true });
+        pending[event.id] = { id: event.id, scenario: scenario, baseVersion: fromVersion, candidate: clone(candidate), changes: clone(changes) };
+        return event;
+      }
+      if (changes.length) commit(candidate);
+      return append({ scenario: scenario, status: 'AUTO', changes: changes, fromVersion: fromVersion, toVersion: page.version, reason: policy.reason, proposalReason: proposal.reason, noOp: !changes.length });
+    }
+    function decide(id, approved) {
+      const item = pending[id];
+      if (!item) return append({ scenario: 'Review', status: 'REJECTED', reason: 'Proposal is no longer pending.', proposalId: id });
+      delete pending[id];
+      if (!approved) return append({ scenario: item.scenario, status: 'REJECTED', changes: item.changes, reason: 'Rejected by supervisor. No page changes were applied.', proposalId: id });
+      if (page.version !== item.baseVersion) return append({ scenario: item.scenario, status: 'REJECTED', changes: item.changes, reason: 'Stale approval blocked: proposal was based on v' + item.baseVersion + '; the page is now v' + page.version + '. Replay the scenario to review a fresh proposal.', proposalId: id });
+      // Revalidate the stored candidate and inspect its actual diff at approval time.
+      validatePage(item.candidate);
+      const changes = computeDiff(page, item.candidate), fromVersion = page.version;
+      if (changes.length) commit(item.candidate);
+      return append({ scenario: item.scenario, status: 'APPROVED', changes: changes, fromVersion: fromVersion, toVersion: page.version, reason: 'Explicit supervisor approval. All proposed changes applied together.', proposalId: id });
+    }
+    function rollback() {
+      if (history.length < 2) return append({ scenario: 'Rollback', status: 'AUTO', noOp: true, reason: 'No previous approved state to restore.' });
+      const target = history[history.length - 2], fromVersion = page.version;
+      const changes = computeDiff(page, Object.assign(clone(target), { version: page.version }));
+      commit(target);
+      return append({ scenario: 'Rollback', action: 'rollback', status: 'APPROVED', changes: changes, fromVersion: fromVersion, toVersion: page.version, restoredVersion: target.version, reason: 'Supervisor restored the approved contents of v' + target.version + ' as new version v' + page.version + '. Full ledger retained.' });
+    }
+    return {
+      getState: () => clone({ page: page, ledger: ledger, pending: pending, history: history }),
+      propose: key => { if (!own(scenarios, key)) return append({ scenario: 'Unknown scenario', status: 'REJECTED', reason: 'Unknown scenario.' }); return submit(Object.assign(clone(scenarios[key]), { baseVersion: page.version })); },
+      submit: submit, approve: id => decide(id, true), reject: id => decide(id, false), rollback: rollback,
+      reset: () => { page = clone(initialPage); ledger = []; pending = {}; history = [clone(page)]; counter = 0; }
+    };
+  }
+  return { createEngine: createEngine, initialPage: clone(initialPage), scenarios: clone(scenarios), schema: clone(schema), computeDiff: computeDiff, evaluatePolicy: evaluatePolicy, validatePage: validatePage };
+}));
+
+</script>
+  <script>
+(function () {
+  'use strict';
+  const engine = TrellisCore.createEngine();
+  const $ = id => document.getElementById(id);
+  const arrow = '<svg class="inline-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M4 3h9v9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const esc = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  let audience = 'General audience', toastTimer, highlightTimer;
+  const featureContent = {
+    governance: { icon: '◇', title: 'Control, by design', body: 'Permissions and review trails for every agent action.', tag: 'GOVERNANCE' },
+    routing: { icon: '⇄', title: 'Work that flows', body: 'Route tasks between your agents, tools, and people.', tag: 'ORCHESTRATION' },
+    developer: { icon: '⌘', title: 'Your stack, connected', body: 'A developer toolkit that fits the way you build.', tag: 'DEVELOPER TOOLS' }
+  };
+  function renderSection(section) {
+    const p = section.props, id = section.id;
+    if (section.type === 'hero') return '<section id="' + id + '" class="relay-hero"><div class="eyebrow">' + esc(p.eyebrow) + '</div><div class="hero-layout"><div><h2>' + esc(p.headline).replace(/\n/g, '<br>') + '</h2><p class="hero-description">' + esc(p.description) + '</p><a class="relay-cta" href="' + esc(p.ctaUrl) + '">' + esc(p.ctaText) + '<span>↗</span></a><div class="hero-note"><span>✦</span> ' + esc(p.note) + '</div></div><div class="workflow-art" aria-label="Illustration of coordinated agent workflows"><div class="art-top"><span><i></i> WORKSPACE</span><span>•••</span></div><div class="art-node source-node"><span class="node-icon">✳</span><div><strong>Your team</strong><small>One shared direction</small></div></div><div class="connector"><i></i><span>COORDINATE</span><i></i></div><div class="art-branches"><span>⌘<small>Build</small></span><span>✧<small>Agents</small></span><span>⇄<small>Tools</small></span></div><div class="art-result"><span>✓</span> Everything in sync <i></i></div><div class="floating-label">A little more flow. ↗</div></div></div></section>';
+    if (section.type === 'features') return '<section id="' + id + '" class="relay-features"><div class="relay-section-heading"><h3>' + esc(p.title) + '</h3><p>' + esc(p.subtitle) + '</p></div><div class="feature-grid">' + p.priorities.map((key, i) => { const f = featureContent[key]; return '<article class="feature-card ' + (i === 0 ? 'priority-card' : '') + '"><div><span class="feature-icon">' + f.icon + '</span><span class="feature-index">0' + (i + 1) + '</span></div><span class="feature-tag">' + f.tag + '</span><h4>' + f.title + '</h4><p>' + f.body + '</p></article>'; }).join('') + '</div></section>';
+    if (section.type === 'assurance') return '<section id="' + id + '" class="relay-assurance"><span class="assurance-icon">◇</span><div><h3>' + esc(p.title) + '</h3><p>' + esc(p.description) + '</p><details class="terms"><summary>Service & security notes</summary><p>' + esc(p.legalClaims) + '</p><p>' + esc(p.guarantees) + '</p></details></div><span class="assurance-arrow">↗</span></section>';
+    if (section.type === 'pricing') return '<section id="' + id + '" class="relay-pricing"><div><span class="eyebrow">' + esc(p.label) + '</span><h3>' + esc(p.title) + '</h3><p>' + esc(p.description) + '</p></div><div class="price-block"><div class="price"><span>$</span><strong id="live-price">' + esc(p.amount) + '</strong><small> ' + esc(p.currency) + '</small></div><p>' + esc(p.billingTerms) + '</p><a href="' + esc(p.ctaUrl) + '">' + esc(p.ctaText) + ' ↗</a></div></section>';
+    return '';
+  }
+  function format(value) {
+    if (value === null) return 'Section removed';
+    if (Array.isArray(value)) return value.join(' → ');
+    if (typeof value === 'object') return JSON.stringify(value, null, 2);
+    return String(value);
+  }
+  function fieldLabel(path) { return path === 'order' ? 'Section order' : path.replace(/^sections\./, '').replace('.props.', ' / '); }
+  function renderDiff(changes) {
+    return changes.map(change => {
+      const gated = TrellisCore.evaluatePolicy([change]).status === 'HOLD';
+      return '<div class="diff-row"><div class="diff-field"><code>' + esc(fieldLabel(change.path)) + '</code>' + (gated ? '<span class="protected-tag">PROTECTED</span>' : '') + '</div><div class="comparison"><div class="before"><span>BEFORE</span><p>' + esc(format(change.before)) + '</p></div><div class="after"><span>PROPOSED / AFTER</span><p>' + esc(format(change.after)) + '</p></div></div></div>';
+    }).join('');
+  }
+  function time(iso) { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+  function update(event) {
+    const state = engine.getState(), page = state.page;
+    const pageChanged = !event || event.fromVersion !== event.toVersion;
+    if (pageChanged) {
+      $('website').innerHTML = page.order.map(id => renderSection(page.sections[id]).replaceAll('↗', arrow)).join('');
+      if (event && event.scenario !== 'Rollback') audience = event.scenario === 'Discount Campaign' ? audience : event.scenario;
+      if (event && event.action === 'rollback') audience = 'Restored approved state';
+      $('audience-label').textContent = audience;
+      $('page-version').textContent = 'PAGESPEC v' + page.version;
+      if (event) {
+        clearTimeout(highlightTimer);
+        const ids = new Set(event.changes.filter(c => c.path.startsWith('sections.')).map(c => c.path.split('.')[1]));
+        if (event.changes.some(c => c.path === 'order')) page.order.forEach(id => ids.add(id));
+        ids.forEach(id => { const el = $(id); if (el) el.classList.add('changed-section'); });
+        highlightTimer = setTimeout(() => document.querySelectorAll('.changed-section').forEach(el => el.classList.remove('changed-section')), 1500);
+      }
+    }
+    $('metric-version').textContent = 'v' + page.version;
+    $('metric-events').textContent = state.ledger.length;
+    $('metric-pending').textContent = Object.keys(state.pending).length;
+    $('rollback').disabled = state.history.length < 2;
+    document.querySelectorAll('[data-scenario]').forEach(button => button.classList.toggle('selected', button.dataset.scenario === (event && ({ 'Enterprise Buyer': 'enterprise', 'Indie Developer': 'indie', 'Discount Campaign': 'discount' })[event.scenario])));
+    $('pending-review').innerHTML = Object.values(state.pending).map(p => {
+      const stale = p.baseVersion !== page.version;
+      return '<section class="review-card"><div class="review-top"><span class="status-badge hold">HOLD</span><span>APPROVAL REQUIRED · BASE v' + p.baseVersion + '</span></div><h3>' + esc(p.scenario) + '</h3><p>' + (stale ? 'Version changed. This approval will be rejected as stale. Reject or replay the scenario.' : 'Protected pricing detected. The entire proposal is held; the live website is unchanged.') + '</p>' + renderDiff(p.changes) + '<div class="review-actions"><button class="approve-button" data-approve="' + p.id + '">✓ Approve proposal</button><button class="reject-button" data-reject="' + p.id + '">Reject</button></div></section>';
+    }).join('');
+    $('ledger').innerHTML = state.ledger.length ? state.ledger.slice().reverse().map((item, index) => {
+      const resolved = item.status === 'HOLD' && !state.pending[item.id];
+      const title = item.action === 'rollback' ? 'Previous state restored' : item.scenario;
+      const subtitle = item.noOp ? 'No changes · version retained' : item.status === 'HOLD' ? (resolved ? 'Held proposal · review completed' : 'Held at the policy gate') : item.status === 'REJECTED' ? 'Page unchanged' : item.action === 'rollback' ? 'New version · history preserved' : item.changes.length + ' fields ' + (item.status === 'APPROVED' ? 'approved' : 'adapted automatically');
+      return '<details class="ledger-event ' + item.status.toLowerCase() + '" ' + (index === 0 ? 'open' : '') + '><summary><span class="event-dot"></span><div class="event-title"><strong>' + esc(title) + '</strong><span>' + esc(subtitle) + '</span></div><div class="event-meta"><span class="status-badge ' + item.status.toLowerCase() + '">' + item.status + '</span><small>' + time(item.timestamp) + '</small></div><span class="expand-chevron">⌄</span></summary><div class="event-body"><div class="version-line"><span>v' + item.fromVersion + (item.toVersion !== item.fromVersion ? ' → v' + item.toVersion : ' · unchanged') + '</span><span>' + esc(item.id) + '</span></div><p class="event-reason">' + esc(item.reason) + '</p>' + (item.proposalReason ? '<p class="proposal-reason">Intent: ' + esc(item.proposalReason) + '</p>' : '') + renderDiff(item.changes) + '</div></details>';
+    }).join('') : '<div class="ledger-empty"><div class="empty-illustration"><span>≡</span><i>✓</i></div><h3>A living page. A clear record.</h3><p>Choose a visitor above to watch the website adapt.<br>Every real modification will appear here.</p><div><span>01 Adapt</span><b>→</b><span>02 Hold</span><b>→</b><span>03 Approve</span><b>→</b><span>04 Rollback</span></div></div>';
+    $('agent-json').textContent = JSON.stringify({ disclosure: 'Machine-readable preview. No live agent API.', version: page.version, pageSpec: page, propertyTypes: TrellisCore.schema, policy: { mode: 'deterministic', safe: 'Validated presentation-only changes auto-apply', protected: ['pricing amounts and currency', 'billing terms', 'legal claims', 'guarantees', 'CTA destination URLs', 'section deletion'], mixedProposal: 'held in entirety', invalid: 'rejected', approvals: 'must match current version' } }, null, 2);
+    if (event) {
+      const message = event.noOp ? 'Already up to date. No new version.' : event.status === 'HOLD' ? 'Proposal held. The live page has not changed.' : event.status === 'REJECTED' ? event.reason : event.action === 'rollback' ? 'Restored as v' + page.version + '. Full history retained.' : 'Published v' + page.version + ' · ' + event.changes.length + ' fields updated.';
+      $('announcement').textContent = message; $('announcement').classList.add('visible');
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => $('announcement').classList.remove('visible'), 4200);
+    }
+  }
+  document.querySelectorAll('[data-scenario]').forEach(button => button.addEventListener('click', () => update(engine.propose(button.dataset.scenario))));
+  $('pending-review').addEventListener('click', event => {
+    const approve = event.target.closest('[data-approve]'), reject = event.target.closest('[data-reject]');
+    if (approve) update(engine.approve(approve.dataset.approve));
+    if (reject) update(engine.reject(reject.dataset.reject));
+  });
+  $('rollback').addEventListener('click', () => update(engine.rollback()));
+  $('reset-demo').addEventListener('click', () => $('reset-dialog').showModal());
+  $('reset-dialog').addEventListener('close', () => { if ($('reset-dialog').returnValue === 'reset') { engine.reset(); audience = 'General audience'; update(); $('announcement').classList.remove('visible'); } });
+  function showTab(agent) {
+    $('agent-view').hidden = !agent; $('supervision-view').hidden = agent;
+    $('agent-tab').classList.toggle('active', agent); $('ledger-tab').classList.toggle('active', !agent);
+    $('agent-tab').setAttribute('aria-selected', agent); $('ledger-tab').setAttribute('aria-selected', !agent);
+  }
+  $('agent-tab').addEventListener('click', () => showTab(true));
+  $('ledger-tab').addEventListener('click', () => showTab(false));
+  document.querySelector('.dashboard-tabs').addEventListener('keydown', event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { const agent = $('agent-view').hidden; showTab(agent); $(agent ? 'agent-tab' : 'ledger-tab').focus(); event.preventDefault(); } });
+  $('download-json').addEventListener('click', () => { const url = URL.createObjectURL(new Blob([$('agent-json').textContent], { type: 'application/json' })); const link = document.createElement('a'); link.href = url; link.download = 'trellis-pagespec-v' + engine.getState().page.version + '.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
+  document.querySelector('.relay-logo').innerHTML = arrow;
+  document.querySelectorAll('.scenario-buttons b').forEach(el => { el.innerHTML = arrow; });
+  update();
+}());
+
+</script>
+</body>
+</html>
