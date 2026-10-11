@@ -10,4 +10,4 @@
 
 The cloud browser blocks direct `file://` navigation administratively. Offline verification used the exact HTML document loaded into Chromium. The app requires no server or asset requests.
 
-GitHub's authenticated user endpoint successfully returned `0xboyu`. The builder explicitly approved public repository creation and GitHub Pages. The creation request then returned HTTP 403, `Resource not accessible by integration`: this connection cannot create a repository. No remote repository or Pages deployment has been created. The prepared source can be uploaded through GitHub's website, or pushed after the builder creates an accessible repository.
+The builder created the approved public repository at https://github.com/0xboyu/trellis-living-web. The frozen application and its source were successfully pushed to `main`. GitHub Pages must be enabled through the repository's website settings: the integration's Pages creation request returned HTTP 403, `Resource not accessible by integration`. No successful Pages deployment or live demo URL is claimed yet.

@@ -2,6 +2,8 @@
 
 Every change should be visible, risk-gated, and reversible.
 
+Repository: [0xboyu/trellis-living-web](https://github.com/0xboyu/trellis-living-web).
+
 Trellis pairs RelayOps, a fictional SaaS landing page, with a supervision dashboard. Visitor scenarios propose changes to a JSON PageSpec. A real diff and deterministic policy engine auto-apply safe presentation changes, hold protected changes for human review, and maintain reversible versions with a complete session ledger.
 
 ## Run
